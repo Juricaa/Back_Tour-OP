@@ -71,7 +71,7 @@ INSTALLED_APPS = [
 
 
     # Tutorials application 
-    'tutorials.apps.TutorialsConfig',
+    # 'tutorials.apps.TutorialsConfig',
     'clients.apps.ClientsConfig',
     'hebergements.apps.HebergementsConfig',
     'voitures.apps.VoituresConfig',

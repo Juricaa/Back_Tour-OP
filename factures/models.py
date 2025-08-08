@@ -37,6 +37,19 @@ class Facture(models.Model):
         default='en_attente'
     )
 
+    paymentStatus = models.CharField(
+        max_length=50,
+        choices=[
+            ('payé', 'Payé'),
+            ('en_attente', 'En attente'),
+            ('partiel', 'Partiel'),
+             ('en_cours', 'En cours'),
+             ('remboursé', 'Remboursé'),
+             ('annule', 'Annulé'),
+        ],
+        default='en_attente'
+    )
+
     totalPrice = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
 
     class Meta:

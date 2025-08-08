@@ -20,7 +20,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [ 
-       path('api/tutorials/', include('tutorials.urls')),
+    #    path('api/tutorials/', include('tutorials.urls')),
        path('api/clients/', include('clients.urls')),
        path('api/hebergements/', include('hebergements.urls')),
        path('api/voitures/', include('voitures.urls')),
