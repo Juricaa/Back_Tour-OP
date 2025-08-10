@@ -37,7 +37,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [],
 }
 
@@ -68,6 +70,8 @@ INSTALLED_APPS = [
     # Django REST framework 
     'rest_framework',
     'drf_yasg',
+    'rest_framework_simplejwt',
+    # 'accounts',
 
 
     # Tutorials application 
@@ -79,6 +83,8 @@ INSTALLED_APPS = [
     'vols.apps.VolsConfig',
     'reservations.apps.ReservationsConfig',
     'factures.apps.FacturesConfig',
+    'accounts.apps.AccountsConfig',
+
 
     # CORS
     'corsheaders',
@@ -119,6 +125,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Database
