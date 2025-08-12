@@ -59,11 +59,24 @@ class RegisterSecretaireSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             name=validated_data['name'],
             password=validated_data['password'],
+            phone=validated_data['phone'],
             role='secretary',
             is_verified=False,  # En attente de validation par admin
             is_active=True
         )
 
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Les mots de passe ne correspondent pas.")
+        return data
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,7 +88,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['role', 'is_verified', 'is_active', 'phone','name', 'password']
+        fields = ['role', 'is_verified', 'is_active', 'phone','name', 'password', 'email']
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
             'phone': {'required': False}
@@ -84,7 +97,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if 'password' in validated_data:
             instance.set_password(validated_data['password'])
-        standard_fields = ['name', 'phone', 'role', 'is_verified', 'is_active']
+        standard_fields = ['name', 'phone', 'role', 'is_verified', 'is_active', 'email']
         for field in standard_fields:
             if field in validated_data:
                 setattr(instance, field, validated_data[field])

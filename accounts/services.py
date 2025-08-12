@@ -7,12 +7,21 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
-from .serializers import LoginSerializer, RegisterSecretaireSerializer, UserSerializer, UserUpdateSerializer
+from .serializers import LoginSerializer, PasswordResetConfirmSerializer, PasswordResetRequestSerializer, RegisterSecretaireSerializer, UserSerializer, UserUpdateSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
+import uuid
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib.auth.hashers import make_password
 
 class RegisterSecretaireView(APIView):
     @swagger_auto_schema(request_body=RegisterSecretaireSerializer)
@@ -114,3 +123,65 @@ def verify_user(request, pk):
         return Response({"message": "Utilisateur vérifié avec succès"}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({"error": "Utilisateur non trouvé"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class PasswordResetRequestView(APIView):
+    @swagger_auto_schema(request_body=PasswordResetRequestSerializer)
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"message": "Si cet email existe, un lien de réinitialisation a été envoyé."}, 
+                              status=status.HTTP_200_OK)
+            
+            # Générer un token et définir une date d'expiration (24 heures)
+            token = uuid.uuid4().hex
+            user.reset_password_token = token
+            user.reset_password_token_expires = timezone.now() +  timedelta(minutes=15)
+            user.save()
+            
+            # Envoyer l'email
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{token}"
+            subject = "Réinitialisation de votre mot de passe"
+            message = f"Cliquez sur ce lien pour réinitialiser votre mot de passe: {reset_url}"
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            return Response({"message": "Si cet email existe, un lien de réinitialisation a été envoyé."}, 
+                          status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetConfirmView(APIView):
+    @swagger_auto_schema(request_body=PasswordResetConfirmSerializer)
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            token = serializer.validated_data['token']
+            new_password = serializer.validated_data['new_password']
+            
+            try:
+                user = User.objects.get(reset_password_token=token)
+            except User.DoesNotExist:
+                return Response({"error": "Token invalide ou expiré"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Vérifier si le token a expiré
+            if user.reset_password_token_expires < timezone.now():
+                return Response({"error": "Token expiré"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Mettre à jour le mot de passe
+            user.password = make_password(new_password)
+            user.reset_password_token = None
+            user.reset_password_token_expires = None
+            user.save()
+            
+            return Response({"message": "Mot de passe réinitialisé avec succès"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

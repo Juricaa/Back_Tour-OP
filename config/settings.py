@@ -38,6 +38,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Ou autre backend pour les tests
+EMAIL_HOST = 'smtp.gmail.com' # Ex: smtp.gmail.com
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'utilisateurclient2@gmail.com'
+EMAIL_HOST_PASSWORD = 'jzba ucfi lepl diui'
+DEFAULT_FROM_EMAIL = 'utilisateurclient2@gmail.com'
+
+# URL de votre frontend pour le lien de réinitialisation
+FRONTEND_URL = 'http://localhost:8080'
+
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',

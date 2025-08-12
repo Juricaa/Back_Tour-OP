@@ -34,7 +34,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     last_login = models.DateTimeField(default=timezone.now)
     phone = models.CharField(max_length=50, blank=True, null=True)
-
+    reset_password_token = models.CharField(max_length=100, blank=True, null=True)
+    reset_password_token_expires = models.DateTimeField(blank=True, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
