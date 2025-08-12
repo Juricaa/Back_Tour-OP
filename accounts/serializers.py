@@ -24,6 +24,19 @@ class LoginSerializer(serializers.Serializer):
                     _("Email ou mot de passe incorrect."),
                     code='authorization'
                 )
+       # Vérification du statut du compte
+            if not user.is_active:
+                raise serializers.ValidationError(
+                    _("Votre compte est désactivé. Contactez l'administrateur."),
+                    code='inactive_account'
+                )
+                
+            if not user.is_verified:
+                raise serializers.ValidationError(
+                    _("Votre compte est en attente de validation par l'administrateur. "
+                      "Vous recevrez un email lorsque votre compte sera activé."),
+                    code='pending_approval'
+                )
         else:
             raise serializers.ValidationError(
                 _("Veuillez fournir l'email et le mot de passe."),
@@ -33,11 +46,10 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
-
 class RegisterSecretaireSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'name', 'password']
+        fields = ['email', 'name', 'password', 'phone']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -47,7 +59,36 @@ class RegisterSecretaireSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             name=validated_data['name'],
             password=validated_data['password'],
-            role='secretaire',
+            role='secretary',
             is_verified=False,  # En attente de validation par admin
             is_active=True
         )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'name', 'role', 'is_verified', 'is_active', 'phone', 'last_login']
+        read_only_fields = ['id', 'email', 'role']
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['role', 'is_verified', 'is_active', 'phone','name', 'password']
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': False},
+            'phone': {'required': False}
+        }
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        standard_fields = ['name', 'phone', 'role', 'is_verified', 'is_active']
+        for field in standard_fields:
+            if field in validated_data:
+                setattr(instance, field, validated_data[field])
+    
+    
+        instance.save()
+        return instance

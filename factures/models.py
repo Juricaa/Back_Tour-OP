@@ -52,6 +52,8 @@ class Facture(models.Model):
 
     totalPrice = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
 
+    destination = models.CharField(max_length=100, null=True, blank=True)
+
     class Meta:
         db_table = 'factures'
 

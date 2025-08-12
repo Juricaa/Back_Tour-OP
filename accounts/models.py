@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils import timezone
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None, role='secretaire', **extra_fields):
+    def create_user(self, email, name, password=None, role='secretary', **extra_fields):
         if not email:
             raise ValueError("L'email est requis")
         email = self.normalize_email(email)
@@ -23,16 +23,17 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
         ('admin', 'Administrateur'),
-        ('secretaire', 'Secrétaire'),
+        ('secretary' , 'secretaire'),
     )
 
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='secretaire')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='secretary')
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     last_login = models.DateTimeField(default=timezone.now)
+    phone = models.CharField(max_length=50, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']

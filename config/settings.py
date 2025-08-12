@@ -17,6 +17,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+# Durée de vie d'une session (ex : 30 minutes)
+SESSION_COOKIE_AGE = 3600 # en secondes
+
+# La session expire à la fermeture du navigateur
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# (Optionnel) Rafraîchir le timer de session uniquement si l'utilisateur interagit
+SESSION_SAVE_EVERY_REQUEST = True
 
 
 # Quick-start development settings - unsuitable for production
