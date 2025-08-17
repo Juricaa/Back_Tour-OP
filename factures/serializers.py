@@ -11,6 +11,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 class FactureSerializer(serializers.ModelSerializer):
     clientId = ClientSerializer(read_only=True)
+    
 
     class Meta:
         model = Facture

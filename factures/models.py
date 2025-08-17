@@ -28,7 +28,7 @@ class Facture(models.Model):
         max_length=50,
         choices=[
             ('confirmé', 'Confirmé'),
-            ('payé', 'Payé'),
+            ('terminé', 'termine'),
             ('en_attente', 'En attente'),
             ('annulé', 'Annulé'),
              ('en_cours', 'En cours'),

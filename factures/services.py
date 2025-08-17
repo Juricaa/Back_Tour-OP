@@ -63,3 +63,29 @@ def montant_total_factures_par_client(request):
             'montant_total': total
         })
     return JsonResponse({'success': True, 'data': data}, status=200)
+
+@api_view(['GET'])
+def factures_par_client(request, pk):
+    try:
+        # 1. Vérifie que le client existe
+        client = Client.objects.get(pk=pk)
+        
+        # 2. Récupère toutes ses factures
+        factures = Facture.objects.filter(clientId=pk)
+        
+        # 3. Sérialise les données
+        serializer = FactureSerializerCreated(factures, many=True)
+        
+        return JsonResponse({
+            'success': True,
+            'client_id': pk,
+            'client_name': f"{client.name}",
+            'count': factures.count(),
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    except Client.DoesNotExist:
+        return JsonResponse(
+            {'success': False, 'message': f'Client ID {pk} introuvable'},
+            status=status.HTTP_404_NOT_FOUND
+        )
