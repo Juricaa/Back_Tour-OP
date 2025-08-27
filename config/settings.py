@@ -63,7 +63,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],
 }
 
-CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -121,9 +120,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
  
+CORS_ALLOW_CREDENTIALS = False
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8080',
+    'http://localhost:8080', 'http://192.168.137.1:8090', 'http://192.168.10.105:8081', 
 )
 
 ROOT_URLCONF = 'config.urls'

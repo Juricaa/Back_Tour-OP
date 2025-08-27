@@ -208,7 +208,9 @@ def reservations_par_client_et_periode(request, client_id):
                 'name': h.name,
                 'location': h.location,
                 'priceRange': h.priceRange,
-                'capacity': h.capacity
+                'capacity': h.capacity,
+                'phone': h.phone,
+                'form': h.type
             }
         
         elif reservation.type == 'voiture' and reservation.object_id in voitures:
@@ -220,6 +222,10 @@ def reservations_par_client_et_periode(request, client_id):
                 'model': v.model,
                 'pricePerDay': v.pricePerDay,
                 'vehicleType': v.vehicleType,
+                'description': v.description,
+                'driverIncluded': v.driverIncluded,
+                'driverName': v.driverName,
+                'driverPhone': v.driverPhone,
 
             }
         
@@ -231,7 +237,10 @@ def reservations_par_client_et_periode(request, client_id):
                 'name': a.name,
                 'category': a.category,
                 'priceAdult': a.priceAdult,
-                'duration': a.duration
+                'duration': a.duration,
+                'guideRequired': a.guideRequired,
+                'guideName': a.guideName,
+                'guidePhone': a.guidePhone,
             }
         
         elif reservation.type == 'vol' and reservation.object_id in vols:
@@ -243,7 +252,8 @@ def reservations_par_client_et_periode(request, client_id):
                 'flightNumber': v.flightNumber,
                 'route_from': v.route_from,
                 'route_to': v.route_to,
-                'price': v.price
+                'price': v.price,
+                'classType': v.flight_class,
             }
         
         results.append({

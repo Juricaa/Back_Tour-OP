@@ -55,6 +55,15 @@ def voiture_detail(request, pk):
                     'data': serializer.data
                  
                  },status=status.HTTP_200_OK)
+    
+    elif request.method == 'PATCH':  # 👈 nouveau
+        data = JSONParser().parse(request)
+        serializer = VoitureSerializer(voiture, data=data, partial=True)  # 👈 clé ici
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
