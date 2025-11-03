@@ -1,5 +1,4 @@
 import datetime
-from subprocess import CREATE_NEW_CONSOLE
 from django.db import connection
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
@@ -237,6 +236,7 @@ def reservations_par_client_et_periode(request, client_id):
                 'name': a.name,
                 'category': a.category,
                 'priceAdult': a.priceAdult,
+                'priceGuide': a.priceGuide,
                 'duration': a.duration,
                 'guideRequired': a.guideRequired,
                 'guideName': a.guideName,

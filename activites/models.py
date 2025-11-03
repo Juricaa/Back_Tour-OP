@@ -28,7 +28,7 @@ class Activite(models.Model):
     duration = models.CharField(max_length=100)
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES)
     priceAdult = models.DecimalField(max_digits=10, decimal_places=2)
-    priceChild = models.DecimalField(max_digits=10, decimal_places=2)
+    priceGuide = models.DecimalField(max_digits=10, decimal_places=2)
     
     # Groupe taille minimale et maximale
     groupSizeMin = models.PositiveIntegerField()
